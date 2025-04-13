@@ -12,18 +12,13 @@ export const updateProductService = async (
     const { name, price, stock, category } = req.body;
     const file = req.file;
 
-    if (!name || !price || !stock || !category) {
-      res
-        .status(400)
-        .json({ message: "Name, price, stock, and category are required" });
+    if (!name && !price && !stock && !category && !file) {
+      res.status(400).json({
+        message: "At least one field (name, price, stock, category, or image) is required",
+      });
       return;
     }
-    if (category !== "MAKANAN" && category !== "MINUMAN") {
-      res
-        .status(400)
-        .json({ message: "Category must be either 'MAKANAN' or 'MINUMAN'" });
-      return;
-    }
+
     const existingProduct = await prisma.product.findFirst({
       where: {
         id,
@@ -36,14 +31,32 @@ export const updateProductService = async (
       return;
     }
 
-    let newImageUrl = existingProduct.imageUrl;
+    const updatedData: Partial<{
+      name: string;
+      price: number;
+      stock: number;
+      category: "MAKANAN" | "MINUMAN";
+      imageUrl: string;
+    }> = {};
+
+    if (name) updatedData.name = name;
+    if (price) updatedData.price = parseInt(price);
+    if (stock) updatedData.stock = parseInt(stock);
+    if (category) {
+      if (category !== "MAKANAN" && category !== "MINUMAN") {
+        res
+          .status(400)
+          .json({ message: "Category must be either 'MAKANAN' or 'MINUMAN'" });
+        return;
+      }
+      updatedData.category = category;
+    }
 
     if (file) {
       try {
         const uploaded = await cloudinaryUpload(file, "products");
-        newImageUrl = uploaded.secure_url;
+        updatedData.imageUrl = uploaded.secure_url;
 
-        // Hapus gambar lama kalau ada
         if (existingProduct.imageUrl) {
           await cloudinaryRemove(existingProduct.imageUrl);
         }
@@ -54,13 +67,7 @@ export const updateProductService = async (
 
     const updatedProduct = await prisma.product.update({
       where: { id },
-      data: {
-        name,
-        price: parseInt(price),
-        stock: parseInt(stock),
-        category,
-        imageUrl: newImageUrl,
-      },
+      data: updatedData,
     });
 
     res.status(200).json({

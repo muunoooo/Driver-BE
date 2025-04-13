@@ -45,8 +45,8 @@ model Shift {
   endedAt    DateTime?
   isActive   Boolean  @default(true)
   totalTransaction Int?   
-totalCash        Int?   
-totalDebit       Int?   
+  totalCash        Int?   
+  totalDebit       Int?   
 
 
   cashier    User     @relation(fields: [cashierId], references: [id])

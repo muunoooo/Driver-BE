@@ -9,10 +9,12 @@ export const updateUserService = async (
 ): Promise<void> => {
   try {
     const { id } = req.params;
-    const { name, email, role, password } = req.body;
+    const { name, email, password } = req.body;
 
-    if (!name || !email || !role) {
-      res.status(400).json({ message: "Name, email, and role are required" });
+    if (!name && !email && !password) {
+      res.status(400).json({
+        message: "At least one field (name, email, or password) is required",
+      });
       return;
     }
 
@@ -28,11 +30,19 @@ export const updateUserService = async (
       return;
     }
 
-    const updatedData: any = {
-      name,
-      email,
-      role,
-    };
+    const updatedData: Partial<{
+      name: string;
+      email: string;
+      password: string;
+    }> = {};
+
+    if (name) {
+      updatedData.name = name;
+    }
+
+    if (email) {
+      updatedData.email = email;
+    }
 
     if (password) {
       const hashedPassword = await bcrypt.hash(password, 10);
@@ -45,12 +55,11 @@ export const updateUserService = async (
     });
 
     res.status(200).json({
-      message: "User updated successfully",
+      message: `User ${name} updated successfully`,
       data: {
         id: updatedUser.id,
         name: updatedUser.name,
         email: updatedUser.email,
-        role: updatedUser.role,
       },
     });
   } catch (err) {

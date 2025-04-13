@@ -1,7 +1,13 @@
 import dotenv from "dotenv";
 dotenv.config();
 import cors from "cors";
-import express, { Application, Response, Request } from "express";
+import express, { Application, Response } from "express";
+import { AuthRouter } from "./router/auth.router";
+import { UserRouter } from "./router/user.router";
+import { ProductRouter } from "./router/product.router";
+import { ReportRouter } from "./router/report.router";
+import { ShiftRouter } from "./router/shift.router";
+import { TransactionRouter } from "./router/transaction.router";
 
 const PORT: number = 8000;
 
@@ -15,9 +21,23 @@ app.use(
   })
 );
 
-app.get("/api", (req: Request, res: Response) => {
+app.get("/api", (res: Response) => {
   res.status(200).json({ message: "Welcome to my Cashier API" });
 });
+
+const authRouter = new AuthRouter();
+const productRouter = new ProductRouter();
+const reportRouter = new ReportRouter();
+const shiftRouter = new ShiftRouter();
+const transactionRouter = new TransactionRouter();
+const userRouter = new UserRouter();
+
+app.use("/api/auth", authRouter.getRouter());
+app.use("/api/product", productRouter.getRouter());
+app.use("/api/report", reportRouter.getRouter());
+app.use("/api/shift", shiftRouter.getRouter());
+app.use("/api/transaction", transactionRouter.getRouter());
+app.use("/api/user", userRouter.getRouter());
 
 app.listen(PORT, () => {
   console.log(`server running on -> http://localhost:${PORT}/api`);

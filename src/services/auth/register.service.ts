@@ -36,7 +36,7 @@ export const registerService = async (
     });
 
     res.status(201).send({
-      message: "User created successfully.",
+      message: `User ${user.name} created successfully.`,
       user: {
         id: user.id,
         name: user.name,

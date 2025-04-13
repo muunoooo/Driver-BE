@@ -26,7 +26,7 @@ export const softDeleteUserService = async (
     });
 
     res.status(200).json({
-      message: "User soft-deleted successfully",
+      message: `User ${user.name} soft-deleted successfully`,
     });
   } catch (err) {
     console.error("Error soft-deleting user:", err);
