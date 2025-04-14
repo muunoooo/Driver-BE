@@ -1,8 +1,9 @@
-import { Request, Response, NextFunction } from "express";
+import {  Response, NextFunction } from "express";
 import prisma from "../../prisma";
+import { AuthenticatedRequest } from "../../types";
 
 export const endShiftService = async (
-  req: Request,
+  req: AuthenticatedRequest,
   res: Response,
   next: NextFunction
 ) => {
