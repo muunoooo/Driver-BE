@@ -4,6 +4,8 @@ import { getUserByIdService } from "../services/user/getUserById.service";
 import { softDeleteUserService } from "../services/user/softDeleteUser.service";
 import { updateUserService } from "../services/user/updateUser.service";
 
+import { getUserProfile } from "../services/user/getProfile.service";
+
 export class UserController {
   async getAllUsersController(req: Request, res: Response, next: NextFunction) {
     try {
@@ -15,6 +17,13 @@ export class UserController {
   async getUsersByIdController(req: Request, res: Response, next: NextFunction) {
     try {
       return getUserByIdService(req, res, next);
+    } catch (error) {
+      next(error);
+    }
+  }
+  async getProfileController(req: Request, res: Response, next: NextFunction) {
+    try {
+      return getUserProfile(req, res,next);
     } catch (error) {
       next(error);
     }

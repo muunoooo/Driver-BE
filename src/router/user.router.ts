@@ -15,6 +15,7 @@ export class UserRouter {
 
   private initializeRoutes() {
     this.router.get("/", authenticate, authorize(["ADMIN"]), this.userController.getAllUsersController);
+    this.router.get("/profile", authenticate, this.userController.getProfileController);
     this.router.get("/:id", authenticate, authorize(["ADMIN"]), this.userController.getUsersByIdController);
     this.router.put("/:id", authenticate, authorize(["ADMIN"]), this.userController.updateUsersController);
 
