@@ -97,6 +97,6 @@ enum PaymentMethod {
 }
 
 enum Category {
-  MAKANAN
-  MINUMAN
+  FOOD
+  DRINK
 }

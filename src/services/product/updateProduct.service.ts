@@ -35,7 +35,7 @@ export const updateProductService = async (
       name: string;
       price: number;
       stock: number;
-      category: "MAKANAN" | "MINUMAN";
+      category: "FOOD" | "DRINK";
       imageUrl: string;
     }> = {};
 
@@ -43,10 +43,10 @@ export const updateProductService = async (
     if (price) updatedData.price = parseInt(price);
     if (stock) updatedData.stock = parseInt(stock);
     if (category) {
-      if (category !== "MAKANAN" && category !== "MINUMAN") {
+      if (category !== "FOOD" && category !== "DRINK") {
         res
           .status(400)
-          .json({ message: "Category must be either 'MAKANAN' or 'MINUMAN'" });
+          .json({ message: "Category must be either 'FOOD' or 'DRINK'" });
         return;
       }
       updatedData.category = category;
