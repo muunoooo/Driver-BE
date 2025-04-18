@@ -14,7 +14,8 @@ export const updateProductService = async (
 
     if (!name && !price && !stock && !category && !file) {
       res.status(400).json({
-        message: "At least one field (name, price, stock, category, or image) is required",
+        message:
+          "At least one field (name, price, stock, category, or image) is required",
       });
       return;
     }

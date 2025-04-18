@@ -22,6 +22,7 @@ export const softDeleteUserService = async (
       where: { id },
       data: {
         isDeleted: true,
+        email: `deleted+${id}@email.com`,
       },
     });
 

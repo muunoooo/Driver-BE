@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import prisma from "../../prisma";
+import { Prisma, Category } from "@prisma/client";
 
 export const getAllProductsService = async (
   req: Request,
@@ -19,13 +20,19 @@ export const getAllProductsService = async (
 
     const order = req.query.order === "desc" ? "desc" : "asc";
 
-    const filterCondition = {
+    const category = req.query.category as string;
+
+    const filterCondition: Prisma.ProductWhereInput = {
       isDeleted: false,
       name: {
         contains: search,
-        mode: "insensitive" as const, 
+        mode: "insensitive",
       },
     };
+
+    if (category && Object.values(Category).includes(category as Category)) {
+      filterCondition.category = category as Category;
+    }
 
     const [products, total] = await Promise.all([
       prisma.product.findMany({

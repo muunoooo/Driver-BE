@@ -13,7 +13,7 @@
 
 */
 -- CreateEnum
-CREATE TYPE "Category" AS ENUM ('MAKANAN', 'MINUMAN');
+CREATE TYPE "Category" AS ENUM ('FOOD', 'DRINK');
 
 -- AlterEnum
 BEGIN;
