@@ -19,6 +19,7 @@ export const getUserProfile = async (
         name: true,
         email: true,
         role: true,
+        avatar: true,
         createdAt: true,
       },
     });

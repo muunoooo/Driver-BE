@@ -1,8 +1,12 @@
-import { Request, Response, NextFunction } from "express";
+import {  Response, NextFunction } from "express";
 import prisma from "../../prisma";
+import { AuthenticatedRequest } from "../../types";
+
+
+
 
 export const getAllTransactionsService = async (
-  req: Request,
+  req: AuthenticatedRequest,
   res: Response,
   next: NextFunction
 ): Promise<void> => {
@@ -12,16 +16,30 @@ export const getAllTransactionsService = async (
     const skip = (page - 1) * limit;
     const search = (req.query.search as string) || "";
 
-    const filterCondition = {
-      cashier: {
-        is: {
-          name: {
-            contains: search,
-            mode: "insensitive" as const,
+    if (!req.user) {
+      res
+        .status(401)
+        .json({ message: "Unauthorized: No user info in request" });
+      return;
+    }
+
+    const isAdmin = req.user.role === "admin";
+
+    // Filter berdasarkan role
+    const filterCondition = isAdmin
+      ? {
+          cashier: {
+            is: {
+              name: {
+                contains: search,
+                mode: "insensitive" as const,
+              },
+            },
           },
-        },
-      },
-    };
+        }
+      : {
+          cashierId: req.user.id,
+        };
 
     const [transactions, total] = await Promise.all([
       prisma.transaction.findMany({
@@ -77,7 +95,7 @@ export const getAllTransactionsService = async (
       message: "Transactions retrieved successfully",
       data: transactions.map((trx) => ({
         ...trx,
-        items: trx.items.map((item: (typeof trx.items)[number]) => ({
+        items: trx.items.map((item) => ({
           id: item.id,
           productId: item.product.id,
           productName: item.product.name,

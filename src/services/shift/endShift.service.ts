@@ -1,4 +1,4 @@
-import {  Response, NextFunction } from "express";
+import { Response, NextFunction } from "express";
 import prisma from "../../prisma";
 import { AuthenticatedRequest } from "../../types";
 
@@ -12,9 +12,10 @@ export const endShiftService = async (
     const { endCash } = req.body;
 
     if (!endCash || isNaN(endCash)) {
-      return res
+      res
         .status(400)
         .json({ message: "endCash is required and must be a number" });
+      return;
     }
 
     const activeShift = await prisma.shift.findFirst({
@@ -25,7 +26,8 @@ export const endShiftService = async (
     });
 
     if (!activeShift) {
-      return res.status(404).json({ message: "No active shift found" });
+      res.status(404).json({ message: "No active shift found" });
+      return;
     }
 
     const transactions = await prisma.transaction.findMany({

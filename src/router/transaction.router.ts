@@ -2,6 +2,7 @@ import { Router } from "express";
 import { authenticate } from "../middlewares/authenticate";
 import { TransactionController } from "../controllers/transaction.controller";
 import { RequestHandler } from "express";
+import { checkActiveShift } from "../middlewares/checkActiveShift";
 
 export class TransactionRouter {
   private transcationController: TransactionController;
@@ -16,7 +17,7 @@ export class TransactionRouter {
   private initializeRoutes() {
     this.router.get("/", authenticate, this.transcationController.getAllTransactionController);
     this.router.get("/:id", authenticate, this.transcationController.getTransactionByIdController);
-    this.router.post("/:id",authenticate, this.transcationController.createTransactionController as RequestHandler);
+    this.router.post("/:id",authenticate, checkActiveShift, this.transcationController.createTransactionController as RequestHandler);
   }
 
   getRouter() {

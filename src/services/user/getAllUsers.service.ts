@@ -10,7 +10,9 @@ export const getAllUsersService = async (
     const page = Math.max(parseInt(req.query.page as string) || 1, 1);
     const limit = parseInt(req.query.limit as string) || 10;
     const skip = (page - 1) * limit;
-    const search = (req.query.search as string) || "";
+    const search = (req.query.query as string) || ""; 
+
+    const isSearching = search.trim() !== "";
 
     const filterCondition = {
       isDeleted: false,
@@ -18,13 +20,16 @@ export const getAllUsersService = async (
         contains: search,
         mode: "insensitive" as const,
       },
+      role: {
+        not: "ADMIN" as const,
+      },
     };
 
     const [users, total] = await Promise.all([
       prisma.user.findMany({
         where: filterCondition,
-        skip,
-        take: limit,
+        skip: isSearching ? undefined : skip,    
+        take: isSearching ? undefined : limit,   
         orderBy: {
           name: "asc",
         },
@@ -46,9 +51,9 @@ export const getAllUsersService = async (
       data: users,
       pagination: {
         total,
-        page,
-        limit,
-        totalPages: Math.ceil(total / limit),
+        page: isSearching ? 1 : page,
+        limit: isSearching ? total : limit,
+        totalPages: isSearching ? 1 : Math.ceil(total / limit),
       },
     });
   } catch (err) {
@@ -56,3 +61,4 @@ export const getAllUsersService = async (
     next(err);
   }
 };
+

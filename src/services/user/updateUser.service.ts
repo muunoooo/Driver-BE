@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import prisma from "../../prisma";
 import bcrypt from "bcrypt";
+import { cloudinaryUpload } from "../../utils/cloudinary";
 
 export const updateUserService = async (
   req: Request,
@@ -10,10 +11,11 @@ export const updateUserService = async (
   try {
     const { id } = req.params;
     const { name, email, password } = req.body;
+    const file = req.file;
 
-    if (!name && !email && !password) {
+    if (!name && !email && !password && !file) {
       res.status(400).json({
-        message: "At least one field (name, email, or password) is required",
+        message: "At least one field (name, email, password, or avatar) is required",
       });
       return;
     }
@@ -34,19 +36,25 @@ export const updateUserService = async (
       name: string;
       email: string;
       password: string;
+      avatar: string;
     }> = {};
 
-    if (name) {
-      updatedData.name = name;
-    }
-
-    if (email) {
-      updatedData.email = email;
-    }
-
+    if (name) updatedData.name = name;
+    if (email) updatedData.email = email;
     if (password) {
       const hashedPassword = await bcrypt.hash(password, 10);
       updatedData.password = hashedPassword;
+    }
+
+    let avatarUploadWarning: string | undefined;
+    if (file) {
+      try {
+        const uploaded = await cloudinaryUpload(file, "avatars");
+        updatedData.avatar = uploaded.secure_url;
+      } catch (uploadErr) {
+        console.warn("⚠️ Avatar upload failed:", uploadErr);
+        avatarUploadWarning = "Avatar upload failed. Profile updated without new avatar.";
+      }
     }
 
     const updatedUser = await prisma.user.update({
@@ -55,11 +63,13 @@ export const updateUserService = async (
     });
 
     res.status(200).json({
-      message: `User ${name} updated successfully`,
+      message: "User updated successfully",
+      warning: avatarUploadWarning,
       data: {
         id: updatedUser.id,
         name: updatedUser.name,
         email: updatedUser.email,
+        avatar: updatedUser.avatar,
       },
     });
   } catch (err) {

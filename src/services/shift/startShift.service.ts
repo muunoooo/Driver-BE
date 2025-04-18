@@ -11,6 +11,10 @@ export const startShiftService = async (
     const cashierId = req.user?.id;
     const { startCash } = req.body;
 
+    if (!cashierId) {
+      return res.status(400).json({ message: "No cashier ID found" });
+    }
+
     if (startCash === undefined || isNaN(startCash)) {
       return res
         .status(400)
@@ -34,7 +38,7 @@ export const startShiftService = async (
     const newShift = await prisma.shift.create({
       data: {
         cashierId,
-        startCash: parseInt(startCash),
+        startCash: parseInt(startCash.toString()),
         isActive: true,
       },
     });

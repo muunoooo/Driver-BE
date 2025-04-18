@@ -9,6 +9,9 @@ export const createTransactionService = async (
 ) => {
   try {
     const cashierId = req.user?.id;
+    if (!cashierId) {
+      return res.status(400).json({ message: "No cashier ID found" });
+    }
 
     const { paymentMethod, cashPaid, debitCardNo, items } = req.body;
 
@@ -24,7 +27,6 @@ export const createTransactionService = async (
         .json({ message: "Transaction items are required" });
     }
 
-
     const activeShift = await prisma.shift.findFirst({
       where: { cashierId, endedAt: null },
     });
@@ -33,17 +35,20 @@ export const createTransactionService = async (
       return res.status(400).json({ message: "No active shift found" });
     }
 
-
     const productIds = items.map((item: any) => item.productId);
     const products = await prisma.product.findMany({
       where: { id: { in: productIds } },
     });
 
-
     let totalPrice = 0;
     const transactionItems = items.map((item: any) => {
       const product = products.find((p) => p.id === item.productId);
       if (!product) throw new Error(`Product not found: ${item.productId}`);
+
+      if (product.stock < item.quantity) {
+        throw new Error(`Insufficient stock for product: ${product.name}`);
+      }
+
       const subtotal = product.price * item.quantity;
       totalPrice += subtotal;
       return {
@@ -51,9 +56,9 @@ export const createTransactionService = async (
         quantity: item.quantity,
         price: product.price,
         subtotal,
+        product,
       };
     });
-
 
     let change = 0;
     if (paymentMethod === "CASH") {
@@ -65,6 +70,18 @@ export const createTransactionService = async (
       return res.status(400).json({ message: "Debit card number is required" });
     }
 
+    const productUpdates = transactionItems.map((item) => {
+      return prisma.product.update({
+        where: { id: item.productId },
+        data: {
+          stock: {
+            decrement: item.quantity,
+          },
+        },
+      });
+    });
+
+    await Promise.all(productUpdates);
 
     const transaction = await prisma.transaction.create({
       data: {

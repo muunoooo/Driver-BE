@@ -3,7 +3,6 @@ import { getAllUsersService } from "../services/user/getAllUsers.service";
 import { getUserByIdService } from "../services/user/getUserById.service";
 import { softDeleteUserService } from "../services/user/softDeleteUser.service";
 import { updateUserService } from "../services/user/updateUser.service";
-
 import { getUserProfile } from "../services/user/getProfile.service";
 
 export class UserController {
