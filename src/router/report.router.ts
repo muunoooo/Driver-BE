@@ -15,13 +15,18 @@ export class ReportRouter {
 
   private initializeRoutes() {
     this.router.get("/daily", authenticate, this.reportController.dailyReportController);
-    this.router.get("/daily-sales", authenticate,  authorize(["ADMIN"]),this.reportController.getDailySalesReprtController);
+
+    this.router.get("/daily-sales", authenticate,  authorize(["ADMIN"]),this.reportController.getDailySalesReportController);
+    this.router.get("/monthly-sales", authenticate,  authorize(["ADMIN"]),this.reportController.getDailySalesReportController);
+    this.router.get("/yearly-sales", authenticate,  authorize(["ADMIN"]),this.reportController.getDailySalesReportController);
+
     this.router.get("/daily-sales/items", authenticate, authorize(["ADMIN"]),this.reportController.getDailySalesPerItemController);
-    this.router.get("/daily-sales/shift", authenticate, authorize(["ADMIN"]),this.reportController.getSalesPerShiftController);
-    this.router.get("/daily-sales/cashier", authenticate, authorize(["ADMIN"]),this.reportController.getSalesPerCashierController);
-    this.router.get("/daily-sales/cashier-items", authenticate, authorize(["ADMIN"]),this.reportController.getSalesPerCashierAndItemController);
-    this.router.get("/daily-sales/payment-method", authenticate, authorize(["ADMIN"]),this.reportController.getSalesByPaymentMethodController);
-    this.router.get("/daily-sales/cash-flow", authenticate, authorize(["ADMIN"]),this.reportController.getCashFlowPerShiftController);
+    this.router.get("/monthly-sales/items", authenticate, authorize(["ADMIN"]),this.reportController.getDailySalesPerItemController);
+    this.router.get("/yearly-sales/items", authenticate, authorize(["ADMIN"]),this.reportController.getDailySalesPerItemController);
+    
+    this.router.get("/daily-sales/shift", authenticate, authorize(["ADMIN"]),this.reportController.getDailyShiftReportController);
+    this.router.get("/monthly-sales/shift", authenticate, authorize(["ADMIN"]),this.reportController.getDailyShiftReportController);
+    this.router.get("/yearly-sales/shift", authenticate, authorize(["ADMIN"]),this.reportController.getDailyShiftReportController);
   }
 
   getRouter() {

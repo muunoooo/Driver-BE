@@ -18,7 +18,6 @@ export const dailyReportService = async (
     const startOfDay = dayjs(date).startOf("day").toDate();
     const endOfDay = dayjs(date).endOf("day").toDate();
 
-    // ✅ Get total count of transactions to calculate total pages
     const totalTransactions = await prisma.transaction.count({
       where: {
         createdAt: {
@@ -28,10 +27,8 @@ export const dailyReportService = async (
       },
     });
 
-    // Calculate the number of pages
     const totalPages = Math.ceil(totalTransactions / parseInt(limit as string));
 
-    // ✅ Get transactions with pagination
     const transactions = await prisma.transaction.findMany({
       where: {
         createdAt: {
@@ -67,7 +64,6 @@ export const dailyReportService = async (
       .filter((trx) => trx.paymentMethod === "DEBIT")
       .reduce((acc, trx) => acc + trx.totalPrice, 0);
 
-    // ✅ Per item sales summary
     const itemSummary: Record<string, { name: string; totalQty: number }> = {};
 
     transactions.forEach((trx) => {
@@ -84,7 +80,6 @@ export const dailyReportService = async (
       });
     });
 
-    // ✅ Get all shifts for the day
     const shifts = await prisma.shift.findMany({
       where: {
         startedAt: {

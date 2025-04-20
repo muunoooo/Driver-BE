@@ -22,7 +22,7 @@ app.use(
 );
 
 app.get("/api", (res: Response) => {
-  res.status(200).json({ message: "Welcome to my Cashier API" });
+  res.status(200).json({ message: "Welcome to Mister Bear API" });
 });
 
 const authRouter = new AuthRouter();

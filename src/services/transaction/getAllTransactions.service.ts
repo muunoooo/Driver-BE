@@ -2,9 +2,6 @@ import {  Response, NextFunction } from "express";
 import prisma from "../../prisma";
 import { AuthenticatedRequest } from "../../types";
 
-
-
-
 export const getAllTransactionsService = async (
   req: AuthenticatedRequest,
   res: Response,
@@ -25,7 +22,6 @@ export const getAllTransactionsService = async (
 
     const isAdmin = req.user.role === "admin";
 
-    // Filter berdasarkan role
     const filterCondition = isAdmin
       ? {
           cashier: {

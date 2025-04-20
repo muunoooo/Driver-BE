@@ -1,7 +1,15 @@
 import { NextFunction, Request, Response } from "express";
 import prisma from "../../prisma";
 
-export const getDailySalesServcice = async (req: Request, res: Response, next:NextFunction): Promise<void> => {
+interface SalesQueryParams {
+  date?: string;
+}
+
+export const getDailySalesServcice = async (
+  req: Request<{}, {}, {}, SalesQueryParams>,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
   try {
     const { date } = req.query;
 
@@ -10,21 +18,54 @@ export const getDailySalesServcice = async (req: Request, res: Response, next:Ne
       return;
     }
 
-    const dailySales = await prisma.transaction.aggregate({
+    let whereClause: { createdAt: { gte: Date; lt: Date } };
+
+    const dateParts = date.split("-");
+
+    if (dateParts.length === 3) {
+      const startOfDay = new Date(`${date}T00:00:00`);
+      const endOfDay = new Date(`${date}T23:59:59`);
+      whereClause = {
+        createdAt: {
+          gte: startOfDay,
+          lt: endOfDay,
+        },
+      };
+    } else if (dateParts.length === 2) {
+      const startOfMonth = new Date(`${date}-01T00:00:00`);
+      const endOfMonth = new Date(startOfMonth);
+      endOfMonth.setMonth(endOfMonth.getMonth() + 1);
+      endOfMonth.setDate(0);
+      whereClause = {
+        createdAt: {
+          gte: startOfMonth,
+          lt: endOfMonth,
+        },
+      };
+    } else if (dateParts.length === 1) {
+      const startOfYear = new Date(`${date}-01-01T00:00:00`);
+      const endOfYear = new Date(`${date}-12-31T23:59:59`);
+      whereClause = {
+        createdAt: {
+          gte: startOfYear,
+          lt: endOfYear,
+        },
+      };
+    } else {
+      res.status(400).send({ message: "Invalid date format" });
+      return;
+    }
+
+    const salesData = await prisma.transaction.aggregate({
       _sum: {
         totalPrice: true,
       },
-      where: {
-        createdAt: {
-          gte: new Date(`${date}T00:00:00`),
-          lt: new Date(`${date}T23:59:59`),
-        },
-      },
+      where: whereClause,
     });
 
-    res.status(200).send(dailySales);
+    res.status(200).send(salesData);
   } catch (err) {
     next(err);
-    res.status(500).send("Error fetching daily sales report" );
+    res.status(500).send("Error fetching sales report");
   }
 };

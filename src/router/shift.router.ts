@@ -1,7 +1,5 @@
 import { Router } from "express";
-
 import { authenticate } from "../middlewares/authenticate";
-
 import { ShiftController } from "../controllers/shift.controller";
 import { RequestHandler } from "express";
 import { checkActiveShift } from "../middlewares/checkActiveShift";

@@ -1,5 +1,4 @@
-import { Request, Response, NextFunction } from "express";
-
+import {  Response, NextFunction } from "express";
 import { startShiftService } from "../services/shift/startShift.service";
 import { AuthenticatedRequest } from "../types";
 import { endShiftService } from "../services/shift/endShift.service";
