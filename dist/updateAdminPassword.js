@@ -13,7 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const bcrypt_1 = __importDefault(require("bcrypt"));
-const prisma_1 = __importDefault(require("./src/prisma"));
+const prisma_1 = __importDefault(require("./prisma"));
 function updateAdminPassword() {
     return __awaiter(this, void 0, void 0, function* () {
         const email = "admin@gmail.com";

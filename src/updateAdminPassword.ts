@@ -1,5 +1,5 @@
 import bcrypt from "bcrypt";
-import prisma from "./src/prisma";
+import prisma from "./prisma";
 
 
 async function updateAdminPassword() {
