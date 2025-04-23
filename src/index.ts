@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 dotenv.config();
 import cors from "cors";
-import express, { Application, Response } from "express";
+import express, { Application, Response, Request } from "express";
 import { AuthRouter } from "./router/auth.router";
 import { UserRouter } from "./router/user.router";
 import { ProductRouter } from "./router/product.router";
@@ -21,8 +21,8 @@ app.use(
   })
 );
 
-app.get("/api", (res: Response) => {
-  res.status(200).json({ message: "Welcome to Mister Bear API" });
+app.get("/api", (req: Request, res: Response) => {
+  res.status(200).json({ message: "Sukses Bro, Welcome to Mister Bear API" });
 });
 
 const authRouter = new AuthRouter();

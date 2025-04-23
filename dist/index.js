@@ -21,8 +21,8 @@ app.use((0, cors_1.default)({
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
 }));
-app.get("/api", (res) => {
-    res.status(200).json({ message: "Welcome to Mister Bear API" });
+app.get("/api", (req, res) => {
+    res.status(200).json({ message: "Sukses Bro, Welcome to Mister Bear API" });
 });
 const authRouter = new auth_router_1.AuthRouter();
 const productRouter = new product_router_1.ProductRouter();
