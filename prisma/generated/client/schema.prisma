@@ -1,0 +1,101 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "./generated/client"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      Role
+  avatar    String?
+  isDeleted Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  shifts       Shift[]
+  transactions Transaction[] @relation("UserTransactions")
+}
+
+model Product {
+  id        String   @id @default(uuid())
+  name      String
+  price     Int
+  stock     Int
+  imageUrl  String?
+  isDeleted Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  category  Category
+
+  transactionItems TransactionItem[]
+}
+
+model Shift {
+  id               String    @id @default(uuid())
+  cashierId        String
+  startCash        Int
+  endCash          Int?
+  startedAt        DateTime  @default(now())
+  endedAt          DateTime?
+  isActive         Boolean   @default(true)
+  totalTransaction Int?
+  totalCash        Int?
+  totalDebit       Int?
+
+  cashier      User          @relation(fields: [cashierId], references: [id])
+  transactions Transaction[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Transaction {
+  id            String        @id @default(uuid())
+  shift         Shift         @relation(fields: [shiftId], references: [id])
+  shiftId       String
+  cashier       User          @relation("UserTransactions", fields: [cashierId], references: [id])
+  cashierId     String
+  totalPrice    Int
+  paymentMethod PaymentMethod
+  cashPaid      Int?
+  debiCard      String?
+  debitCardNo   String?
+  change        Int?
+  createdAt     DateTime      @default(now())
+
+  items TransactionItem[]
+}
+
+model TransactionItem {
+  id            String      @id @default(uuid())
+  transaction   Transaction @relation(fields: [transactionId], references: [id])
+  transactionId String
+  product       Product     @relation(fields: [productId], references: [id])
+  productId     String
+  quantity      Int
+  price         Int
+  subtotal      Int
+}
+
+enum Role {
+  ADMIN
+  CASHIER
+}
+
+enum PaymentMethod {
+  CASH
+  DEBIT
+}
+
+enum Category {
+  FOOD
+  DRINK
+}

@@ -36,6 +36,7 @@ export class UserRouter {
       "/:id",
       authenticate,
       uploader("memoryStorage", "Avatars-").single("avatar"),
+      authorize(["ADMIN", "CASHIER"]),
       this.userController.updateUsersController
     );
 
