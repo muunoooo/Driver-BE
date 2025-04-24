@@ -197,7 +197,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "d:\\Nofal Coding\\Cashier\\BE\\prisma\\generated\\client",
+      "value": "D:\\Nofal Coding\\Cashier\\BE\\prisma\\generated\\client",
       "fromEnvVar": null
     },
     "config": {
@@ -211,11 +211,11 @@ const config = {
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "d:\\Nofal Coding\\Cashier\\BE\\prisma\\schema.prisma",
+    "sourceFilePath": "D:\\Nofal Coding\\Cashier\\BE\\prisma\\schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
-    "rootEnvPath": "../../../.env",
+    "rootEnvPath": null,
     "schemaEnvPath": "../../../.env"
   },
   "relativePath": "../..",
