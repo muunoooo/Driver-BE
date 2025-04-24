@@ -14,7 +14,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getAllProductsService = void 0;
 const prisma_1 = __importDefault(require("../../prisma"));
-const client_1 = require("@prisma/client");
 const getAllProductsService = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const page = Math.max(parseInt(req.query.page) || 1, 1);
@@ -34,7 +33,8 @@ const getAllProductsService = (req, res, next) => __awaiter(void 0, void 0, void
                 mode: "insensitive",
             },
         };
-        if (category && Object.values(client_1.Category).includes(category)) {
+        if (category &&
+            ["FOOD", "DRINK"].includes(category)) {
             filterCondition.category = category;
         }
         const [products, total] = yield Promise.all([

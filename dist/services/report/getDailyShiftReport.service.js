@@ -72,7 +72,7 @@ const getShiftReportService = (req, res, next) => __awaiter(void 0, void 0, void
                 transactions: true,
             },
             orderBy: {
-                startedAt: "asc",
+                startedAt: "desc",
             },
             skip,
             take: limitNumber,
