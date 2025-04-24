@@ -73,7 +73,7 @@ export const getShiftReportService = async (
         transactions: true,
       },
       orderBy: {
-        startedAt: "asc",
+        startedAt: "desc",
       },
       skip,
       take: limitNumber,

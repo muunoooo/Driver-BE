@@ -30,8 +30,15 @@ export const getAllProductsService = async (
       },
     };
 
-    if (category && Object.values(Category).includes(category as Category)) {
-      filterCondition.category = category as Category;
+    type AllowedCategory = "FOOD" | "DRINK";
+
+    if (
+      category &&
+      (["FOOD", "DRINK"] as AllowedCategory[]).includes(
+        category as AllowedCategory
+      )
+    ) {
+      filterCondition.category = category as AllowedCategory;
     }
 
     const [products, total] = await Promise.all([
