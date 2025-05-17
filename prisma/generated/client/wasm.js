@@ -17,12 +17,12 @@ exports.Prisma = Prisma
 exports.$Enums = {}
 
 /**
- * Prisma Client JS version: 6.5.0
- * Query Engine version: 173f8d54f8d52e692c7e27e72a88314ec7aeff60
+ * Prisma Client JS version: 6.6.0
+ * Query Engine version: f676762280b54cd07c770017ed3711ddde35f37a
  */
 Prisma.prismaVersion = {
-  client: "6.5.0",
-  engine: "173f8d54f8d52e692c7e27e72a88314ec7aeff60"
+  client: "6.6.0",
+  engine: "f676762280b54cd07c770017ed3711ddde35f37a"
 }
 
 Prisma.PrismaClientKnownRequestError = () => {
@@ -117,65 +117,36 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
   Serializable: 'Serializable'
 });
 
-exports.Prisma.UserScalarFieldEnum = {
+exports.Prisma.DriversScalarFieldEnum = {
   id: 'id',
-  name: 'name',
-  email: 'email',
-  password: 'password',
-  role: 'role',
-  avatar: 'avatar',
-  isDeleted: 'isDeleted',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  driver_code: 'driver_code',
+  name: 'name'
 };
 
-exports.Prisma.ProductScalarFieldEnum = {
+exports.Prisma.Drivers_AttendancesScalarFieldEnum = {
   id: 'id',
-  name: 'name',
-  price: 'price',
-  stock: 'stock',
-  imageUrl: 'imageUrl',
-  isDeleted: 'isDeleted',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  category: 'category'
+  driver_code: 'driver_code',
+  attendance_date: 'attendance_date',
+  attendance_status: 'attendance_status'
 };
 
-exports.Prisma.ShiftScalarFieldEnum = {
+exports.Prisma.Shipment_CostsScalarFieldEnum = {
   id: 'id',
-  cashierId: 'cashierId',
-  startCash: 'startCash',
-  endCash: 'endCash',
-  startedAt: 'startedAt',
-  endedAt: 'endedAt',
-  isActive: 'isActive',
-  totalTransaction: 'totalTransaction',
-  totalCash: 'totalCash',
-  totalDebit: 'totalDebit',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  driver_code: 'driver_code',
+  shipment_no: 'shipment_no',
+  total_costs: 'total_costs',
+  cost_status: 'cost_status'
 };
 
-exports.Prisma.TransactionScalarFieldEnum = {
-  id: 'id',
-  shiftId: 'shiftId',
-  cashierId: 'cashierId',
-  totalPrice: 'totalPrice',
-  paymentMethod: 'paymentMethod',
-  cashPaid: 'cashPaid',
-  debiCard: 'debiCard',
-  debitCardNo: 'debitCardNo',
-  change: 'change',
-  createdAt: 'createdAt'
+exports.Prisma.ShipmentScalarFieldEnum = {
+  shipment_no: 'shipment_no',
+  shipment_date: 'shipment_date',
+  shipment_status: 'shipment_status'
 };
 
-exports.Prisma.TransactionItemScalarFieldEnum = {
-  id: 'id',
-  transactionId: 'transactionId',
-  productId: 'productId',
-  quantity: 'quantity',
-  price: 'price',
-  subtotal: 'subtotal'
+exports.Prisma.Variable_ConfigScalarFieldEnum = {
+  key: 'key',
+  value: 'value'
 };
 
 exports.Prisma.SortOrder = {
@@ -187,32 +158,24 @@ exports.Prisma.QueryMode = {
   default: 'default',
   insensitive: 'insensitive'
 };
-
-exports.Prisma.NullsOrder = {
-  first: 'first',
-  last: 'last'
-};
-exports.Role = exports.$Enums.Role = {
-  ADMIN: 'ADMIN',
-  CASHIER: 'CASHIER'
+exports.CostStatus = exports.$Enums.CostStatus = {
+  PENDING: 'PENDING',
+  CONFIRMED: 'CONFIRMED',
+  PAID: 'PAID'
 };
 
-exports.Category = exports.$Enums.Category = {
-  FOOD: 'FOOD',
-  DRINK: 'DRINK'
-};
-
-exports.PaymentMethod = exports.$Enums.PaymentMethod = {
-  CASH: 'CASH',
-  DEBIT: 'DEBIT'
+exports.ShipmentStatus = exports.$Enums.ShipmentStatus = {
+  RUNNING: 'RUNNING',
+  DONE: 'DONE',
+  CANCELED: 'CANCELED'
 };
 
 exports.Prisma.ModelName = {
-  User: 'User',
-  Product: 'Product',
-  Shift: 'Shift',
-  Transaction: 'Transaction',
-  TransactionItem: 'TransactionItem'
+  Drivers: 'Drivers',
+  Drivers_Attendances: 'Drivers_Attendances',
+  Shipment_Costs: 'Shipment_Costs',
+  Shipment: 'Shipment',
+  Variable_Config: 'Variable_Config'
 };
 
 /**
@@ -232,7 +195,7 @@ class PrismaClient {
         } else {
           message = 'PrismaClient is unable to run in this browser environment, or has been bundled for the browser (running in `' + runtime.prettyName + '`).'
         }
-        
+
         message += `
 If this is unexpected, please open an issue: https://pris.ly/prisma-prisma-bug-report`
 

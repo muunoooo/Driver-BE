@@ -4,98 +4,59 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
 }
 
-model User {
-  id        String   @id @default(uuid())
-  name      String
-  email     String   @unique
-  password  String
-  role      Role
-  avatar    String?
-  isDeleted Boolean  @default(false)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  shifts       Shift[]
-  transactions Transaction[] @relation("UserTransactions")
+enum CostStatus {
+  PENDING
+  CONFIRMED
+  PAID
 }
 
-model Product {
-  id        String   @id @default(uuid())
-  name      String
-  price     Int
-  stock     Int
-  imageUrl  String?
-  isDeleted Boolean  @default(false)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  category  Category
-
-  transactionItems TransactionItem[]
+enum ShipmentStatus {
+  RUNNING
+  DONE
+  CANCELED
 }
 
-model Shift {
-  id               String    @id @default(uuid())
-  cashierId        String
-  startCash        Int
-  endCash          Int?
-  startedAt        DateTime  @default(now())
-  endedAt          DateTime?
-  isActive         Boolean   @default(true)
-  totalTransaction Int?
-  totalCash        Int?
-  totalDebit       Int?
-
-  cashier      User          @relation(fields: [cashierId], references: [id])
-  transactions Transaction[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+model Drivers {
+  id           String               @id @default(uuid())
+  driver_code  String               @unique
+  name         String
+  attendances  Drivers_Attendances[]
+  shipmentCosts Shipment_Costs[]
 }
 
-model Transaction {
-  id            String        @id @default(uuid())
-  shift         Shift         @relation(fields: [shiftId], references: [id])
-  shiftId       String
-  cashier       User          @relation("UserTransactions", fields: [cashierId], references: [id])
-  cashierId     String
-  totalPrice    Int
-  paymentMethod PaymentMethod
-  cashPaid      Int?
-  debiCard      String?
-  debitCardNo   String?
-  change        Int?
-  createdAt     DateTime      @default(now())
+model Drivers_Attendances {
+  id                String   @id @default(uuid())
+  driver_code       String
+  attendance_date   DateTime
+  attendance_status Boolean
 
-  items TransactionItem[]
+  driver            Drivers  @relation(fields: [driver_code], references: [driver_code])
 }
 
-model TransactionItem {
-  id            String      @id @default(uuid())
-  transaction   Transaction @relation(fields: [transactionId], references: [id])
-  transactionId String
-  product       Product     @relation(fields: [productId], references: [id])
-  productId     String
-  quantity      Int
-  price         Int
-  subtotal      Int
+model Shipment_Costs {
+  id           String     @id @default(uuid())
+  driver_code  String
+  shipment_no  String
+  total_costs  Int
+  cost_status  CostStatus
+
+  driver       Drivers    @relation(fields: [driver_code], references: [driver_code])
+  shipment     Shipment   @relation(fields: [shipment_no], references: [shipment_no])
 }
 
-enum Role {
-  ADMIN
-  CASHIER
+model Shipment {
+  shipment_no      String           @id
+  shipment_date    DateTime
+  shipment_status  ShipmentStatus
+  shipmentCosts    Shipment_Costs[]
 }
 
-enum PaymentMethod {
-  CASH
-  DEBIT
-}
-
-enum Category {
-  FOOD
-  DRINK
+model Variable_Config {
+  key   String @id
+  value Int
 }
