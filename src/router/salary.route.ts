@@ -1,6 +1,6 @@
 // routes/salary.route.ts
 import { Router } from "express";
-import { SalaryController } from "@/controllers/salary.controller";
+import { SalaryController } from "../controllers/salary.controller";
 
 const router = Router();
 

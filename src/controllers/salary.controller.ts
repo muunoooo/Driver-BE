@@ -1,4 +1,4 @@
-import { salaryService } from "@/services/salary.service";
+import { salaryService } from "../services/salary.service";
 import { Request, Response } from "express";
 
 export const SalaryController = async (req: Request, res: Response) => {

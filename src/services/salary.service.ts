@@ -1,15 +1,21 @@
-import prisma from "@/prisma";
+import prisma from "../prisma";
 
 export const salaryService = async (query: any) => {
-  const month = Number(query.month);
-  const year = Number(query.year);
   const pageSize = Number(query.page_size) || 10;
   const current = Number(query.current) || 1;
   const driver_code = query.driver_code || undefined;
   const name = query.name || undefined;
   const status = query.status || undefined;
+  const month = Number(query.month);
+  const year = Number(query.year);
 
   if (!month || !year) throw new Error("Month and Year are required");
+
+  const startDate = new Date(`${year}-${String(month).padStart(2, "0")}-01`);
+  const endDate =
+    month === 12
+      ? new Date(`${year + 1}-01-01`)
+      : new Date(`${year}-${String(month + 1).padStart(2, "0")}-01`);
 
   const attendanceSalary = await prisma.variable_Config.findUnique({
     where: { key: "DRIVER_MONTHLY_ATTENDANCE_SALARY" },
@@ -27,8 +33,8 @@ export const salaryService = async (query: any) => {
         where: {
           attendance_status: true,
           attendance_date: {
-            gte: new Date(`${year}-${month}-01`),
-            lt: new Date(`${year}-${month + 1}-01`),
+            gte: startDate,
+            lt: endDate,
           },
         },
       },
@@ -36,12 +42,8 @@ export const salaryService = async (query: any) => {
         where: {
           shipment: {
             shipment_date: {
-              gte: new Date(`${year}-${month}-01`),
-              lt: new Date(
-                `${month === 12 ? year + 1 : year}-${
-                  month === 12 ? 1 : month + 1
-                }-01`
-              ),
+              gte: startDate,
+              lt: endDate,
             },
             shipment_status: {
               not: "CANCELED",
@@ -102,6 +104,7 @@ export const salaryService = async (query: any) => {
     });
 
   const total_row = filteredDrivers.length;
+  const total_pages = Math.ceil(total_row / pageSize);
   const paginated = filteredDrivers.slice(
     (current - 1) * pageSize,
     current * pageSize
@@ -109,8 +112,13 @@ export const salaryService = async (query: any) => {
 
   return {
     data: paginated,
-    total_row,
-    current,
-    page_size: pageSize,
+    pagination: {
+      total_row,
+      page_size: pageSize,
+      current_page: current,
+      total_pages,
+      has_next_page: current < total_pages,
+      has_prev_page: current > 1,
+    },
   };
 };
