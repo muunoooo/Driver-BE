@@ -21,15 +21,17 @@ Buat file `.env` di root direktori dan isi dengan:
 DATABASE_URL="postgresql://postgres.vewlchdvcjwqjjhzauwt:Purwadhika123@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres?pgbouncer=true"
 DIRECT_URL="postgresql://postgres.vewlchdvcjwqjjhzauwt:Purwadhika123@aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres"
 
+```
 
 ## 🚀 Cara Menjalankan Project
+
 git clone https://github.com/muunoooo/Driver-BE.git
 cd Driver-BE
 npm install
 npx prisma generate
 npm run dev
 
-📘 API Endpoint
+## 📘 API Endpoint
 GET /v1/salary/driver/list
 Mengembalikan daftar driver beserta total gaji berdasarkan bulan dan tahun yang dipilih.
 
@@ -44,10 +46,10 @@ Mengembalikan daftar driver beserta total gaji berdasarkan bulan dan tahun yang 
 | `status`      | string | ❌     | Filter status gaji: `PENDING`, `CONFIRMED`, `PAID` |
 
 
-🔄 Contoh Request
+## 🔄 Contoh Request
 GET /v1/salary/driver/list?month=2&year=2024&name=Driver%20Name%201
 
-✅ Contoh Response
+## ✅ Contoh Response
 {
   "data": [
     {
@@ -71,7 +73,7 @@ GET /v1/salary/driver/list?month=2&year=2024&name=Driver%20Name%201
   }
 }
 
-🧮 Penjelasan Field Gaji
+## 🧮 Penjelasan Field Gaji
 
 | Field                     | Deskripsi                                                        |
 | ------------------------- | ---------------------------------------------------------------- |
