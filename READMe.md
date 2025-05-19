@@ -1,6 +1,6 @@
 # 🚚 Driver Salary API
 
-API sederhana untuk menghitung total gaji driver berdasarkan kehadiran bulanan dan biaya pengiriman dari shipment. Dibangun dengan **Node.js**, **Express.js**, **TypeScript**, dan **Prisma ORM**.
+API sederhana untuk menghitung total gaji driver berdasarkan kehadiran bulanan dan biaya pengiriman (`shipment cost`). Dibangun menggunakan **Node.js**, **Express.js**, **TypeScript**, dan **Prisma ORM**.
 
 ---
 
@@ -8,8 +8,8 @@ API sederhana untuk menghitung total gaji driver berdasarkan kehadiran bulanan d
 
 - **Node.js** + **Express.js**
 - **TypeScript**
-- **Prisma ORM** + **PostgreSQL / MySQL**
-- **ts-node-dev** untuk pengembangan
+- **Prisma ORM** (PostgreSQL / MySQL)
+- **ts-node-dev** untuk pengembangan lokal
 
 ---
 
@@ -20,36 +20,55 @@ Buat file `.env` di root direktori dan isi dengan:
 ```env
 DATABASE_URL="postgresql://postgres.vewlchdvcjwqjjhzauwt:Purwadhika123@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres?pgbouncer=true"
 DIRECT_URL="postgresql://postgres.vewlchdvcjwqjjhzauwt:Purwadhika123@aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres"
-
 ```
+
+> 🔐 **Note**: Pastikan untuk tidak commit `.env` ke GitHub. Tambahkan `.env` ke `.gitignore`.
+
+---
 
 ## 🚀 Cara Menjalankan Project
 
+```bash
 git clone https://github.com/muunoooo/Driver-BE.git
 cd Driver-BE
 npm install
 npx prisma generate
 npm run dev
+```
 
-## 📘 API Endpoint
-GET /v1/salary/driver/list
-Mengembalikan daftar driver beserta total gaji berdasarkan bulan dan tahun yang dipilih.
+---
 
-| Param         | Tipe   | Wajib | Deskripsi                                          |
-| ------------- | ------ | ----- | -------------------------------------------------- |
-| `month`       | number | ✅     | Bulan (1-12)                                       |
-| `year`        | number | ✅     | Tahun, contoh: `2024`                              |
-| `page_size`   | number | ❌     | Jumlah item per halaman (default: 10)              |
-| `current`     | number | ❌     | Halaman saat ini (default: 1)                      |
-| `driver_code` | string | ❌     | Filter berdasarkan kode driver                     |
-| `name`        | string | ❌     | Filter exact match berdasarkan nama driver         |
-| `status`      | string | ❌     | Filter status gaji: `PENDING`, `CONFIRMED`, `PAID` |
+## 📘 API Documentation
 
+### GET `/v1/salary/driver/list`
 
-## 🔄 Contoh Request
+Mengembalikan daftar driver beserta total gaji berdasarkan **bulan** dan **tahun**.
+
+### 📌 Query Parameters
+
+| Parameter     | Tipe   | Wajib | Deskripsi                                          |
+|---------------|--------|--------|----------------------------------------------------|
+| `month`       | number | Yes    | Bulan (1–12)                                       |
+| `year`        | number | Yes    | Tahun, contoh: `2024`                              |
+| `page_size`   | number | No     | Jumlah data per halaman (default: 10)              |
+| `current`     | number | No     | Halaman saat ini (default: 1)                      |
+| `driver_code` | string | No     | Filter berdasarkan kode driver                     |
+| `name`        | string | No     | Filter exact match nama driver (case-insensitive) |
+| `status`      | string | No     | Filter status gaji: `PENDING`, `CONFIRMED`, `PAID` |
+
+---
+
+### 🔄 Contoh Request
+
+```
 GET /v1/salary/driver/list?month=2&year=2024&name=Driver%20Name%201
+```
 
-## ✅ Contoh Response
+---
+
+### ✅ Contoh Response
+
+```json
 {
   "data": [
     {
@@ -72,15 +91,26 @@ GET /v1/salary/driver/list?month=2&year=2024&name=Driver%20Name%201
     "has_prev_page": false
   }
 }
-
-## 🧮 Penjelasan Field Gaji
-
-| Field                     | Deskripsi                                                        |
-| ------------------------- | ---------------------------------------------------------------- |
-| `total_pending`           | Total shipment cost berstatus `PENDING`                          |
-| `total_confirmed`         | Total shipment cost berstatus `CONFIRMED`                        |
-| `total_paid`              | Total shipment cost berstatus `PAID`                             |
-| `total_attendance_salary` | Jumlah kehadiran dikali nilai `DRIVER_MONTHLY_ATTENDANCE_SALARY` |
-| `total_salary`            | Penjumlahan semua komponen gaji                                  |
-| `count_shipment`          | Jumlah shipment unik yang dijalankan driver (tidak dibatalkan)   |
 ```
+
+---
+
+### 🧮 Penjelasan Field Gaji
+
+| Field                   | Deskripsi                                                                 |
+|-------------------------|--------------------------------------------------------------------------|
+| `total_pending`         | Total shipment cost dengan status `PENDING`                              |
+| `total_confirmed`       | Total shipment cost dengan status `CONFIRMED`                            |
+| `total_paid`            | Total shipment cost dengan status `PAID`                                 |
+| `total_attendance_salary` | Total kehadiran × `DRIVER_MONTHLY_ATTENDANCE_SALARY`                    |
+| `total_salary`          | Jumlah total semua komponen gaji (`attendance + shipment`)              |
+| `count_shipment`        | Jumlah shipment unik yang dijalankan driver (tidak dibatalkan/CANCELED) |
+
+---
+
+## 🧑 Author
+
+Developed by [@muunoooo](https://github.com/muunoooo)  
+Made with ✌ using modern backend technologies.
+
+---
