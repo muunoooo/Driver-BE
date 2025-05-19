@@ -1,6 +1,7 @@
+import { SalaryQuery } from "@/types/salary";
 import prisma from "../prisma";
 
-export const salaryService = async (query: any) => {
+export const salaryService = async (query: SalaryQuery) => {
   const pageSize = Number(query.page_size) || 10;
   const current = Number(query.current) || 1;
   const driver_code = query.driver_code || undefined;
@@ -23,10 +24,10 @@ export const salaryService = async (query: any) => {
 
   const attendanceSalaryValue = attendanceSalary?.value || 0;
 
-  const drivers = await prisma.drivers.findMany({
+  const allDrivers = await prisma.drivers.findMany({
     where: {
       ...(driver_code && { driver_code }),
-      ...(name && { name: { contains: name, mode: "insensitive" } }),
+      ...(name && { name: { equals: name, mode: "insensitive" } }),
     },
     include: {
       attendances: {
@@ -55,7 +56,7 @@ export const salaryService = async (query: any) => {
     },
   });
 
-  const filteredDrivers = drivers
+  const allProcessed = allDrivers
     .map((driver) => {
       const total_attendance_salary =
         driver.attendances.length * attendanceSalaryValue;
@@ -103,9 +104,9 @@ export const salaryService = async (query: any) => {
       return driver.total_salary > 0;
     });
 
-  const total_row = filteredDrivers.length;
+  const total_row = allProcessed.length;
   const total_pages = Math.ceil(total_row / pageSize);
-  const paginated = filteredDrivers.slice(
+  const paginated = allProcessed.slice(
     (current - 1) * pageSize,
     current * pageSize
   );

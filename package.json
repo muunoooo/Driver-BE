@@ -1,5 +1,5 @@
 {
-  "name": "be",
+  "name": "driver-salary-be",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
@@ -22,7 +22,6 @@
   },
   "dependencies": {
     "@prisma/client": "^6.5.0",
-    "dayjs": "^1.11.13",
     "dotenv": "^16.4.7",
     "express": "^5.1.0"
   }
